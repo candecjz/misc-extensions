@@ -1,7 +1,6 @@
 (function (customElements) {
 
-  // 1. CONFIGURACIÓN DE TU BACKEND PYTHON
-  // ⚠️ IMPORTANTE: Cambia esto por la IP real de tu servidor cuando no sea localhost
+ 
   const PYTHON_SITE_URL = "http://localhost:8000/dashboard"; // URL del dashboard de FastAPI
 
   const STYLES = `
@@ -32,9 +31,7 @@
     /* Estilos de carga y error eliminados, ya que no hacemos validación previa */
   </style>`;
 
-  /**
-   * Helper para buscar el token en el almacenamiento del navegador HSI
-   */
+ 
   const obtenerTokenHSI = () => {
     const token = localStorage.getItem('token') ||
       sessionStorage.getItem('token') ||
@@ -76,11 +73,9 @@
       btn.addEventListener('click', (e) => this.handleClick(e, btn));
     }
 
-    /**
-     * Lógica principal de la "Tubería": Solo extrae el token y redirige.
-     */
+   
     handleClick(e, btn) {
-      e.preventDefault(); // Evitamos que un <a> link haga algo si lo modificamos
+      e.preventDefault(); 
 
       const token = obtenerTokenHSI();
 
@@ -89,10 +84,8 @@
         return;
       }
 
-      // El token debe ir codificado para evitar problemas con caracteres especiales (&, /, etc.)
       const urlDestino = `${PYTHON_SITE_URL}?t=${encodeURIComponent(token)}`;
       
-      // SIMPLEMENTE ABRIMOS LA VENTANA, la validación se hace en FastAPI al cargar la página.
       window.open(urlDestino, '_blank');
     }
   }
