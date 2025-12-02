@@ -1,9 +1,6 @@
 (function (customElements) {
 
- 
-  const PYTHON_SITE_URL = "http://localhost:8000/dashboard"; // URL del dashboard de FastAPI
-
-  const STYLES = `
+    const STYLES = `
   <style>
     .link-button {
       display: inline-block;
@@ -11,85 +8,80 @@
       margin: 8px;
       font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 400;
       text-align: center;
       text-decoration: none;
       color: #ffffff;
       background-color: #0078D7;
       border: 2px solid #0078D7;
-      border-radius: 4px;
+      border-radius: 0;
       cursor: pointer;
-      transition: all 0.2s ease-in-out;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
     }
     .link-button:hover {
-      background-color: #005a9e;
-      border-color: #005a9e;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+      background-color: #ffffff;
+      color: #0078D7;
     }
-    /* Estilos de carga y error eliminados, ya que no hacemos validación previa */
+    .link-button:active {
+      background-color: #e6e6e6;
+      color: #0078D7;
+    }
   </style>`;
 
- 
-  const obtenerTokenHSI = () => {
-    const token = localStorage.getItem('token') ||
-      sessionStorage.getItem('token') ||
-      localStorage.getItem('access_token'); // Nombres comunes
-    return token ? token.replace(/"/g, '') : null;
-  };
-
-  const createTemplate = (label) => {
-    const template = document.createElement('template');
-    template.innerHTML = `
+    /**
+     * Creates the HTML template for the link button.
+     * @param {string} href - The URL the button will link to.
+     * @param {string} label - The text displayed on the button.
+     * @returns {HTMLTemplateElement} The template element.
+     */
+    const createTemplate = (href, label) => {
+        const template = document.createElement('template');
+        template.innerHTML = `
       ${STYLES}
-      <button type="button" class="link-button">
+      <a href="${href}" class="link-button" target="_blank" rel="noopener noreferrer">
         ${label}
-      </button>
+      </a>
     `;
-    return template;
-  };
+        return template;
+    };
 
-  class LinkButtonWidget extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
+    /**
+     * Defines the LinkButtonWidget custom element.
+     */
+    class LinkButtonWidget extends HTMLElement {
+        constructor() {
+            super();
+            this.attachShadow({ mode: 'open' });
+        }
+
+        /**
+         * Called when the element is added to the document's DOM.
+         * This is a reliable lifecycle callback for initial setup.
+         */
+        connectedCallback() {
+            const hardcodedParams = {
+                href: "https://blog-hsi.nubecenter.com.ar/",
+                label: "Acceder al blog"
+            };
+
+            this.render(hardcodedParams);
+        }
+
+        /**
+         * Renders the component based on the provided parameters.
+         * @param {object} params - The parameters for the component.
+         */
+        render(params) {
+            const { href, label } = params;
+
+            this.shadowRoot.innerHTML = '';
+
+            const template = createTemplate(href, label);
+            this.shadowRoot.appendChild(template.content.cloneNode(true));
+        }
     }
 
-    connectedCallback() {
-      // Renderizamos con el texto de tu extensión
-      this.render({ label: "💊 Objetivos Sanitarios" });
-    }
-
-    render(params) {
-      const { label } = params;
-      this.shadowRoot.innerHTML = '';
-
-      const template = createTemplate(label);
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
-
-      // Agregamos el Listener del Click
-      const btn = this.shadowRoot.querySelector('.link-button');
-      btn.addEventListener('click', (e) => this.handleClick(e, btn));
-    }
-
-   
-    handleClick(e, btn) {
-      e.preventDefault(); 
-
-      const token = obtenerTokenHSI();
-
-      if (!token) {
-        alert("⚠️ Error: No se detectó una sesión activa en HSI.");
-        return;
-      }
-
-      const urlDestino = `${PYTHON_SITE_URL}?t=${encodeURIComponent(token)}`;
-      
-      window.open(urlDestino, '_blank');
-    }
-  }
-
-  customElements.define('link-button-widget', LinkButtonWidget);
+    // Define the new custom element so it can be used in HTML.
+    customElements.define('link-button-widget', LinkButtonWidget);
 
 })(window.customElements);
