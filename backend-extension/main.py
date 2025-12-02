@@ -5,6 +5,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import requests
+from typing import Optional
+
 
 app = FastAPI(title="Punto de Extensión HSI")
 
@@ -25,8 +27,9 @@ templates = Jinja2Templates(directory=templates_path)
 
 HSI_BASE_URL = "https://hsi-dev.nubecenter.com.ar/api"
 
+templates.env.auto_reload = True
+templates.env.cache = None
 
-# --- DATOS HARDCODEADOS (MIGRACIÓN DE ANGULAR) ---
 OBJETIVOS_DATA = [
     {
         "id": 1,
@@ -266,100 +269,58 @@ OBJETIVOS_DATA = [
             },
         ],
     },
-    {
-        "id": 9,
-        "name": "Atención odontológica",
-        "type": "flowchart",
-        "category": "transversal",
-        "miniature1": "/static/images/ODON-TRANSVERSAL.png",
-        "pdfDR": "/static/pdfs/ODON-TRANSVERSAL.pdf",
-    },
-    {
-        "id": 10,
-        "name": "Actividad física",
-        "type": "flowchart",
-        "category": "transversal",
-        "miniature1": "/static/images/ACT_FISICA_TRANSVERSAL..png",
-        "pdfDR": "/static/pdfs/ACT_FISICA_TRANSVERSAL.pdf",
-    },
-    {
-        "id": 11,
-        "name": "Atención nutricional",
-        "type": "flowchart",
-        "category": "transversal",
-        "miniature1": "/static/images/NUTRI-TRANSVERSAL-SOBREPESO.png",
-        "pdfDR": "/static/pdfs/NUTRI-TRANSVERSAL-SOBREPESO.pdf",
-    },
+            {
+                "id": 9,
+                "name": "Atención odontológica",
+                "type": "flowchart",
+                "category": "transversal",
+                "miniature1": "/static/images/ODON-TRANSVERSAL.png",
+                "pdfDR": "/static/pdfs/ODON-TRANSVERSAL.pdf",
+            },
+            {
+                "id": 10,
+                "name": "Actividad física",
+                "type": "flowchart",
+                "category": "transversal",
+                "miniature1": "/static/images/ACT_FISICA_TRANSVERSAL..png",
+                "pdfDR": "/static/pdfs/ACT_FISICA_TRANSVERSAL.pdf",
+            },
+            {
+                "id": 11,
+                "name": "Atención nutricional",
+                "type": "flowchart",
+                "category": "transversal",
+                "miniature1": "/static/images/NUTRI-TRANSVERSAL-SOBREPESO.png",
+                "pdfDR": "/static/pdfs/NUTRI-TRANSVERSAL-SOBREPESO.pdf",
+            },
 ]
 
-
-# --- LÓGICA DE VALIDACIÓN Y OBTENCIÓN DE USUARIO ---
-def obtener_usuario_hsi(token: str):
+def validar_sesion(token: str) -> bool:
+    if not token:
+        return False
     endpoint = f"{HSI_BASE_URL}/account/info"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "accept": "*/*"
-    }
-    
-    print(f"📡 [DEBUG] Intentando conectar a: {endpoint}") 
-    
+    headers = {"Authorization": f"Bearer {token}", "accept": "*/*"}
     try:
-        response = requests.get(endpoint, headers=headers, timeout=5)
-        print(f"📡 [DEBUG] Respuesta HSI: {response.status_code}") 
-        if response.status_code == 200:
-            data = response.json()
-            print(f"📡 [DEBUG] Datos recibidos: {data}") 
-            return data
-        else:
-            print(f"⛔ [ERROR] Token rechazado: {response.status_code} - {response.text}")
-            return None
-    except Exception as e:
-        print(f"⛔ [ERROR] Excepción conectando: {e}")
-        return None
+        response = requests.get(endpoint, headers=headers, timeout=3)
+        return response.status_code == 200
+    except:
+        return False
 
-# --- ENDPOINT DEL DASHBOARD ---
 @app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request, t: str = Query(..., description="Token de autenticación")):
+async def dashboard(request: Request, t: Optional[str] = Query(None, description="Token opcional")):
     
-    # 1. VALIDAR TOKEN Y OBTENER USUARIO REAL
-    datos_usuario = obtener_usuario_hsi(t)
+    sesion_activa = validar_sesion(t)
     
-    if not datos_usuario:
-        return """
-        <html>
-            <body style="background-color: #ffebee; font-family: sans-serif; text-align: center; padding: 50px;">
-                <h1 style="color: #c62828;">⛔ Acceso Denegado</h1>
-                <p>No se pudo validar su sesión con el HSI.</p>
-                <p><small>Verifique que su sesión en HSI esté activa.</small></p>
-            </body>
-        </html>
-        """
-
-    nombre_completo = "Usuario HSI"
-    user_id = datos_usuario.get("id", "Unknown")
-    
-    if "personDto" in datos_usuario:
-        nombre = datos_usuario["personDto"].get("firstName", "")
-        apellido = datos_usuario["personDto"].get("lastName", "")
-        nombre_completo = f"{nombre} {apellido}".strip()
-
     objetivos_principales = [item for item in OBJETIVOS_DATA if item['id'] < 9]
     rutas_transversales = [item for item in OBJETIVOS_DATA if item['id'] >= 9]
 
-  
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
-        "token": t,
-        "usuario": {
-            "id": user_id,
-            "nombre": nombre_completo,
-            "raw": datos_usuario
-        },
+        "sesion_activa": sesion_activa,
         "objetivos": objetivos_principales,
         "transversales": rutas_transversales
     })
 
-# Ruta de salud para Docker
 @app.get("/")
 def health_check():
-    return {"status": "online", "service": "Extension HSI Python", "version": "2.1.0"}
+    return {"status": "online"}
