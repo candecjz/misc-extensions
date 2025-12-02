@@ -1,0 +1,9 @@
+[
+  {
+    "slot": "INSTITUTION_HOME_PAGE",
+    "title": "Servicios Externos",
+    "description": "Acceso a Objetivos Sanitarios (Python)",
+    "componentName": "link-button-widget",
+    "url": "http://localhost:5500/main.js"
+  }
+]
