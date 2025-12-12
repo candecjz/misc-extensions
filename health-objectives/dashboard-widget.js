@@ -13,19 +13,18 @@
         }
 
         getToken() {
-            // 1. Prioridad: Window Global
+        
             if (window.__HSI_DEV_TOKEN__) {
                 return window.__HSI_DEV_TOKEN__;
             }
 
             const candidates = ['token', 'access_token', 'id_token', 'currentUser'];
             
-            // 2. Bucle corregido
+           
             for (const key of candidates) {
                 let item = localStorage.getItem(key) || sessionStorage.getItem(key);
                 
                 if (item) {
-                    // Limpiar comillas si es string
                     if (item.startsWith('"')) item = item.slice(1, -1);
                     
                     // Si es token directo
@@ -34,16 +33,13 @@
                     // Si es objeto JSON
                     try {
                         const json = JSON.parse(item);
-                        // Buscamos propiedades comunes
                         const subToken = json.token || json.accessToken || json.id_token;
                         if (subToken && subToken.startsWith('eyJ')) return subToken;
                     } catch (e) { }
                 }
-                // ELIMINADO EL return null DE AQUÍ
+                
             }
-            // (El bucle termina sin encontrar nada en storage)
 
-            // 3. Cookies
             if (document.cookie) {
                 const cookies = document.cookie.split(';');
                 for (let i = 0; i < cookies.length; i++) {
@@ -57,7 +53,6 @@
                 }
             }
 
-            // Si llegamos aquí y no encontramos nada, entonces devolvemos null
             return null;
         }
 
@@ -86,7 +81,6 @@
 
             const iframe = document.createElement('iframe');
             iframe.className = 'dashboard-frame';
-            // Pasamos el token codificado
             iframe.src = `${PYTHON_DASHBOARD_URL}?t=${encodeURIComponent(token)}`;
             
             this.shadowRoot.appendChild(iframe);
