@@ -1,6 +1,6 @@
 (function (customElements) {
 
-    const PYTHON_DASHBOARD_URL = "http://localhost:5000/dashboard";
+const PYTHON_DASHBOARD_URL = "https://extension-hsi.nubecenter.com.ar/dashboard";
 
     class DashboardWidget extends HTMLElement {
         constructor() {
@@ -86,7 +86,6 @@
 
             const iframe = document.createElement('iframe');
             iframe.className = 'dashboard-frame';
-            // Pasamos el token codificado
             iframe.src = `${PYTHON_DASHBOARD_URL}?t=${encodeURIComponent(token)}`;
             
             this.shadowRoot.appendChild(iframe);
