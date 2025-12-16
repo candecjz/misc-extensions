@@ -52,11 +52,25 @@ OBJETIVOS_DATA = [
             },
             {
                 "id": 2.2,
+                "name": "Chagas - Transmisión vertical materno infantil",
+                "type": "flowchart",
+                "miniature1": "/static/images/2-b.png",
+                "pdfDR": "/static/pdfs/2-B.pdf",
+            },
+            {
+                "id": 2.3,
                 "name": "Control de niños menores de 3 años",
                 "type": "flowchart",
-                "miniature1": None,
-                "pdfDR": None,
+                "miniature1": "/static/images/2-c.png",
+                "pdfDR": "/static/pdfs/2-C.pdf",
             },
+            {
+                "id": 2.4,
+                "name": "Control de niños menores de 10 años",
+                "type": "flowchart",
+                "miniature1": "/static/images/2-d.png",
+                "pdfDR": "/static/pdfs/2-D.pdf",
+            }
         ],
     },
     {
@@ -259,14 +273,7 @@ OBJETIVOS_DATA = [
                 "type": "flowchart",
                 "miniature1": "/static/images/8-c.png",
                 "pdfDR": "/static/pdfs/8-C.pdf",
-            },
-            {
-                "id": 8.41,
-                "name": "Chagas",
-                "type": "flowchart",
-                "miniature1": "/static/images/8-d.png",
-                "pdfDR": "/static/pdfs/8-D.pdf",
-            },
+            }
         ],
     },
             {
