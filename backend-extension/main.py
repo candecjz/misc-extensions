@@ -310,15 +310,15 @@ OBJETIVOS_DATA = [
                         "id": 12.1,
                         "name": "Primer y Segundo Nivel de Atención",
                         "type": "flowchart",
-                        "miniature1": None,
-                        "pdfDR": None,
+                        "miniature1": "/static/images/ENF_TRANSVERSAL_N1_N2.png",
+                        "pdfDR": "/static/pdfs/ENF_TRANSVERSAL_N1_N2.pdf",
                     },
                     {
                         "id": 12.2,
                         "name": "Tercer Nivel de Atención",
                         "type": "flowchart",
-                        "miniature1": None,
-                        "pdfDR": None,
+                        "miniature1": "/static/images/ENF_TRANSVERSAL_N3.png",
+                        "pdfDR": "/static/pdfs/ENF_TRANSVERSAL_N3.pdf",
                     }
 
                 ]
