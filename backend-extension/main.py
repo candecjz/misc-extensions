@@ -300,6 +300,30 @@ OBJETIVOS_DATA = [
                 "miniature1": "/static/images/NUTRI-TRANSVERSAL-SOBREPESO.png",
                 "pdfDR": "/static/pdfs/NUTRI-TRANSVERSAL-SOBREPESO.pdf",
             },
+            {
+                "id": 12,
+                "name": "Enfermería",
+                "type": "objective",
+                "category": "transversal",
+                "children": [
+                    {
+                        "id": 12.1,
+                        "name": "Primer y Segundo Nivel de Atención",
+                        "type": "flowchart",
+                        "miniature1": "/static/images/ENF_TRANSVERSAL_N1_N2.png",
+                        "pdfDR": "/static/pdfs/ENF_TRANSVERSAL_N1_N2.pdf",
+                    },
+                    {
+                        "id": 12.2,
+                        "name": "Tercer Nivel de Atención",
+                        "type": "flowchart",
+                        "miniature1": "/static/images/ENF_TRANSVERSAL_N3.png",
+                        "pdfDR": "/static/pdfs/ENF_TRANSVERSAL_N3.pdf",
+                    }
+
+                ]
+                
+            }
 ]
 
 def validar_sesion(token: str) -> bool:
