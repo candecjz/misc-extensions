@@ -95,8 +95,6 @@
                             </button>
                         </div>
                     </div>
-
-                    <!-- 🔴 ESTE ES EL CONTENEDOR DONDE SE INYECTARÁN LOS RESULTADOS (Sin borrar el buscador) 🔴 -->
                     <div id="resultados-container"></div>
                 </div>
             `;
