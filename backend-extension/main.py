@@ -393,7 +393,6 @@ async def dashboard(request: Request, t: Optional[str] = Query(None, description
     objetivos_principales = [item for item in OBJETIVOS_DATA if item['id'] < 10]
     rutas_transversales = [item for item in OBJETIVOS_DATA if item['id'] >= 10]
 
-    # --- NUEVA LÓGICA DE FECHAS ---
     ahora = datetime.now()
     
     def es_reciente(fecha_str):
@@ -417,3 +416,100 @@ async def dashboard(request: Request, t: Optional[str] = Query(None, description
 @app.get("/")
 def health_check():
     return {"status": "online"}
+
+
+MOCK_LABORATORIOS = [
+    {
+        "Institucion": "Hospital Regional Vera Barros (SISA: 102030 | CUIT: 30-12345678-9)",
+        "Fecha": "2023-10-25T08:30:00",
+        "Categoria": "Laboratorio",
+        "Estado de la Orden": "Completado",
+        "Profesional interviniente": "Gomez, Ana Maria",
+        "Tipo de Solicitud": "Rutina",
+        "Origen de la Solicitud": "Consultorio Externo",
+        "Nombre del Paciente": "Perez, Juan",
+        "Tipo de Documento": "DNI",
+        "Numero de Documento": "41284061",
+        "Obra Social": "APOS",
+        "Numero de Afiliado": "123456789",
+        "Profesional solicitante": "Dr. House, Gregory",
+        "Tipo de Documento profesional": "DNI",
+        "Numero de Documento profesional": "20123456",
+        "profesion": "Médico Clínico",
+        "Licencia": "MP 1234",
+        "Nota": "Paciente en ayunas 8hs",
+        "Fecha de Emision": "2023-10-25T11:45:00",
+        "Nombre del Estudio": "Hemograma completo (SNOMED: 43789009 | CIE10: Z01.7)",
+        "Resultados (Cantidad y Unidad)": "Glóbulos rojos 4.5 millones/uL | Glóbulos blancos 7000 /uL | Plaquetas 250000 /uL",
+        "Notas adicionales": "Valores dentro de los parámetros normales",
+        "Problema Asociado": "Control de salud de rutina [Estado: Activo, Verificación: Confirmado, Severidad: Leve, Tipo: Problema] (SNOMED: 123456 | CIE10: Z00.0) Fecha: 2023-10-01"
+    },
+    {
+        "Institucion": "Hospital de la Madre y el Niño (SISA: 405060 | CUIT: 30-98765432-1)",
+        "Fecha": "2024-01-15T09:15:00",
+        "Categoria": "Laboratorio",
+        "Estado de la Orden": "Completado",
+        "Profesional interviniente": "Lopez, Carlos",
+        "Tipo de Solicitud": "Urgencia",
+        "Origen de la Solicitud": "Guardia",
+        "Nombre del Paciente": "Perez, Juan",
+        "Tipo de Documento": "DNI",
+        "Numero de Documento": "41284061",
+        "Obra Social": "APOS",
+        "Numero de Afiliado": "123456789",
+        "Profesional solicitante": "Dra. Grey, Meredith",
+        "Tipo de Documento profesional": "DNI",
+        "Numero de Documento profesional": "25987654",
+        "profesion": "Cirujano General",
+        "Licencia": "MP 5678",
+        "Nota": "Pre-quirúrgico de urgencia",
+        "Fecha de Emision": "2024-01-15T10:30:00",
+        "Nombre del Estudio": "Glucemia (SNOMED: 14749005 | CIE10: R73.9)",
+        "Resultados (Cantidad y Unidad)": "Glucosa 95 mg/dL",
+        "Notas adicionales": "Muestra levemente hemolizada",
+        "Problema Asociado": "Sospecha de apendicitis aguda [Estado: Activo, Verificación: Confirmado, Severidad: Moderada, Tipo: Problema] (SNOMED: 654321 | CIE10: K35.9) Fecha: 2024-01-15"
+    },
+    {
+        "Institucion": "Centro Primario de Salud San Vicente",
+        "Fecha": "2024-02-20T10:00:00",
+        "Categoria": "Laboratorio",
+        "Estado de la Orden": "Pendiente",
+        "Profesional interviniente": "Martinez, Sofia",
+        "Tipo de Solicitud": "Control",
+        "Origen de la Solicitud": "Consultorio Externo",
+        "Nombre del Paciente": "Gomez, Laura",
+        "Tipo de Documento": "DNI",
+        "Numero de Documento": "35123456",
+        "Obra Social": "PAMI",
+        "Numero de Afiliado": "987654321",
+        "Profesional solicitante": "Dr. Fernandez, Luis",
+        "Tipo de Documento profesional": "DNI",
+        "Numero de Documento profesional": "18765432",
+        "profesion": "Endocrinólogo",
+        "Licencia": "MP 4321",
+        "Nota": "",
+        "Fecha de Emision": "2024-02-20T10:05:00",
+        "Nombre del Estudio": "Perfil Tiroideo (TSH, T4L)",
+        "Resultados (Cantidad y Unidad)": "Sin resultados",
+        "Notas adicionales": "",
+        "Problema Asociado": "Hipotiroidismo [Estado: Crónico, Verificación: Confirmado, Severidad: Moderada, Tipo: Diagnóstico] (SNOMED: 40930008 | CIE10: E03.9) Fecha: 2020-05-10"
+    }
+]
+
+@app.get("/api/laboratorios/{dni}")
+async def api_laboratorios(dni: str):
+    """
+    Endpoint que recibe un DNI en la URL y devuelve los laboratorios del paciente.
+    Filtra los datos hardcodeados para simular una consulta real.
+    """
+    resultados_paciente = [
+        registro for registro in MOCK_LABORATORIOS 
+        if registro["Numero de Documento"] == dni
+    ]
+    
+    return {
+        "status": "success",
+        "paciente_dni": dni,
+        "total_registros": len(resultados_paciente),
+        "data": resultados_paciente
+    }

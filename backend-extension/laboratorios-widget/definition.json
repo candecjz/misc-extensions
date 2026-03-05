@@ -1,0 +1,8 @@
+[
+  {
+    "slot": "PATIENT_SUMMARY",
+    "title": "Resultados de Laboratorio",
+    "componentName": "laboratorios-widget",
+    "url": "./main.js"
+  }
+]
