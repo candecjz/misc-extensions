@@ -69,7 +69,7 @@
                         box-sizing: border-box;
                     }
 
-                    .search-input:focus { border-color: #1976d2; }
+                    .search-input:focus { border-color: #2687C5; }
 
                     .search-icon-btn {
                         position: absolute;
@@ -79,7 +79,7 @@
                         background: none;
                         border: none;
                         cursor: pointer;
-                        color: #1976d2;
+                        color: #2687C5;
                         display: flex;
                     }
 
@@ -133,7 +133,7 @@
         async ejecutarBusqueda(dni) {
             if (!dni || dni.trim() === '') return;
             const contenedor = this.shadowRoot.getElementById('resultados-container');
-            contenedor.innerHTML = `<div style="padding: 40px; text-align: center; color: #1976d2;">⏳ Buscando para el DNI ${dni}...</div>`;
+            contenedor.innerHTML = `<div style="padding: 40px; text-align: center; color: #2687C5;">⏳ Buscando para el DNI ${dni}...</div>`;
 
             try {
                 const response = await fetch(`${API_BASE_URL}/${dni.trim()}`);
@@ -161,7 +161,7 @@
                         align-items: center;
                         border-bottom: 1px solid #e0e0e0;
                     }
-                    .icono-paciente { margin-right: 15px; color: #1890ff; display: flex; }
+                    .icono-paciente { margin-right: 15px; color: #2687C5; display: flex; }
                     .item-estudio {
                         padding: 15px 20px;
                         display: flex;
@@ -171,7 +171,7 @@
                     }
                     .info-estudio { display: flex; align-items: center; }
                     .btn-descargar {
-                        background-color: #1890ff;
+                        background-color: #2687C5;
                         color: white;
                         border: none;
                         padding: 8px 16px;
@@ -181,8 +181,11 @@
                         align-items: center;
                         gap: 8px;
                         font-size: 13px;
+                        box-shadow: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f;
                     }
+                    .btn-descargar:active { background-color: rgb(55, 148, 206); box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.15), 0 8px 10px #00000015, 0 3px 14px #00000013; }
                     .btn-descargar svg { fill: white; width: 16px; height: 16px; }
+                    
                 </style>
             `;
 
