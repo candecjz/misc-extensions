@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objetivos Sanitarios Prioritarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        body { background-color: #f5f5f5; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .page-title { color: #333; margin: 20px 0; font-weight: 500; border-left: 5px solid #3487C5; padding-left: 15px; }
+        .subtitle { color: #333; margin-left: 20px; margin-bottom: 20px; font-size: 25px;}
+        .objective-number { font-weight: bold; color: #3487C5; margin-right: 5px; }
+        .accordion-button:not(.collapsed) { background-color: #e7f1ff; color: #3487C5; }
+        .accordion-body { background-color: #fff; }
+        .btn-pdf { display: flex; align-items: center; background: white; border: 1px solid #ddd; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s; text-decoration: none; color: #333; min-width: 200px; margin-right: 10px; margin-bottom: 10px; }
+        .btn-pdf:hover { background-color: #f8f9fa; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-color: #0078D7; color: #0078D7; }
+        .nested-level { margin-left: 15px; border-left: 2px solid #e9ecef; }
+        .update-text-objective { font-size: 0.9rem; color: #3487C5; display: flex; align-items: center; }
+        .update-text-subitem { font-size: 0.8rem; color: #333; display: flex; align-items: center; }
+        .bi-clock::before { font-size: 0.8rem; margin-right: 2px;}
+        .bi-info-circle::before { color: #888; }
+        .without-info { color: #888; }
+        .notification-dot {width: 10px;height: 10px;background-color: #db5349;border-radius: 50%;display: inline-block;margin-right: 8px;flex-shrink: 0;border: 1px solid white;box-shadow: 0 0 5px rgba(200, 83, 74, 0.6);animation: pulse-red 2s infinite;}
+        @keyframes pulse-red {0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(218, 71, 60, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(217, 48, 37, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(217, 48, 37, 0); }}
+        .hidden-notification {display: none !important;}
+    </style>
+</head>
+<body>
+
+<div class="container mb-5">
+    <h2 class="page-title">Objetivos Sanitarios e Indicadores Priorizados</h2>
+    <h3 class="subtitle">Flujogramas de atención por objetivo</h3>
+
+    {% macro render_accordion_item(item, parent_id) %}
+    {% set current_id = "collapse-" ~ item.id|string|replace('.', '-') %}
+    {% set has_content = item.pdfDR or item.pdfDT %}
+    {% set has_children = item.children and item.children|length > 0 %}
+    {% set is_available = has_content or has_children %}
+    {% set is_new = es_reciente(item.fecha) %}
+
+    <div class="accordion-item mb-2 border rounded overflow-hidden shadow-sm">
+        <h2 class="accordion-header" id="heading-{{ current_id }}">
+            <button class="accordion-button collapsed" type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#{{ current_id }}"
+                    onclick="markAsRead('{{ item.id }}')">
+                
+                <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                    <div>
+                        {% if item.category != 'transversal' and item.id is number and item.id % 1 == 0 %}
+                            <span class="objective-number">{{ item.id }}.</span>
+                        {% endif %}
+                        <span class="fw-medium">{{ item.name }}</span>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        {% if is_available %}
+                            {% set is_main_objective = item.id is number and item.id % 1 == 0 %}
+                            <span class="{{ 'update-text-objective' if is_main_objective else 'update-text-subitem' }}">
+                                {% if item.fecha %}
+                                    <i id="clock-{{ item.id|string|replace('.', '-') }}" 
+                                    class="bi {{ 'bi-clock' if is_main_objective }} me-1 {{ 'd-none' if is_new }}">
+                                    </i>
+                                    {% if is_new %}
+                                        <span id="dot-{{ item.id|string|replace('.', '-') }}" 
+                                            class="notification-dot" 
+                                            data-bs-toggle="tooltip" 
+                                            data-bs-placement="top" 
+                                            title="Actualización reciente">
+                                        </span>
+                                    {% endif %}
+                                    Actualizado el  {{ item.fecha }}
+                                {% else %}
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    <span class="without-info"> No hay actualización </span>
+                                {% endif %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </button>
+        </h2>
+
+        <div id="{{ current_id }}" class="accordion-collapse collapse" data-bs-parent="#{{ parent_id }}">
+            <div class="accordion-body">
+                {% if has_children %}
+                    <div class="accordion accordion-flush nested-level" id="parent-{{ current_id }}">
+                        {% for child in item.children %}
+                            {{ render_accordion_item(child, "parent-" ~ current_id) }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if has_content %}
+                    <div class="d-flex flex-wrap mt-3">
+                        {% if item.pdfDR %}
+                        <a href="{{ item.pdfDR }}" target="_blank" class="btn-pdf">
+                            <i class="bi bi-diagram-2-fill fs-2 me-2" style="color: #3487C5;"></i>
+                            <div>
+                                <small class="text-muted d-block">Ver archivo</small>
+                                <strong>Diagrama de ruta</strong>
+                            </div>
+                        </a>
+                        {% endif %}
+                         
+                        {% if item.pdfDT %}
+                        <a href="{{ item.pdfDT }}" target="_blank" class="btn-pdf">
+                            <i class="bi bi-file-text fs-2 text-primary me-2"></i>
+                            <div>
+                                <small class="text-muted d-block">Ver archivo</small>
+                                <strong>Documento técnico</strong>
+                            </div>
+                        </a>
+                        {% endif %}
+                    </div>
+                {% elif not has_children %}
+                    <div class="alert alert-secondary mt-2 d-flex align-items-center">
+                        <i class="bi bi-info-circle me-2"></i> Sin información disponible.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endmacro %}
+
+    <div class="accordion" id="accordionObjetivos">
+        {% for obj in objetivos %}
+            {{ render_accordion_item(obj, "accordionObjetivos") }}
+        {% endfor %}
+    </div>
+
+    {% if transversales %}
+        <h3 class="page-title mt-5">Flujogramas de atención transversal</h3>
+        <div class="accordion" id="accordionTransversales">
+            {% for trans in transversales %} 
+                {{ render_accordion_item(trans, "accordionTransversales") }}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function markAsRead(itemId) {
+    const safeId = itemId.toString().replace('.', '-');
+    const dot = document.getElementById('dot-' + safeId);
+    const clock = document.getElementById('clock-' + safeId); 
+    
+    if (dot) {
+        const tooltip = bootstrap.Tooltip.getInstance(dot);
+        if (tooltip) { tooltip.hide(); }
+
+        dot.classList.add('hidden-notification');
+        
+        if (clock) {
+            clock.classList.remove('d-none');
+        }
+
+        let readItems = JSON.parse(localStorage.getItem('read_notifications') || "[]");
+        if (!readItems.includes(itemId.toString())) {
+            readItems.push(itemId.toString());
+            localStorage.setItem('read_notifications', JSON.stringify(readItems));
+        }
+    }
+}
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const readItems = JSON.parse(localStorage.getItem('read_notifications') || "[]");
+        
+        readItems.forEach(id => {
+            const safeId = id.toString().replace('.', '-');
+            const dot = document.getElementById('dot-' + safeId);
+            const clock = document.getElementById('clock-' + safeId);
+
+            if (dot) {
+                dot.classList.add('hidden-notification');
+            }
+            if (clock) {
+                clock.classList.remove('d-none');
+            }
+        });
+
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Button Component Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="main.js"></script>
+</head>
+<body>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 mb-4">Blog button component</h1>
+            <p class="lead text-muted mb-5">Hardcoded blog button made for accessing our system's dev blog</p>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-5">
+                    <h3 class="mb-4">Live demo</h3>
+
+                    <link-button-widget></link-button-widget>
+
+                    <hr class="my-5">
+
+                    <div class="row text-start">
+                        <div class="col-md-6">
+                            <h5>Features</h5>
+                            <ul class="list-unstyled">
+                                <li>✅ Custom plain JS web component</li>
+                                <li>✅ Hover animations</li>
+                                <li>✅ Responsive design</li>
+                                <li>✅ Shadow DOM encapsulation</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Usage</h5>
+                            <code>&lt;link-button-widget&gt;&lt;/link-button-widget&gt;</code>
+                            <p class="small text-muted mt-2">
+                                Include the JavaScript file and use the custom tag anywhere in your HTML, or embed it to HSI as an extension linking to <b>definition.json</b>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
