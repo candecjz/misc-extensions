@@ -1,5 +1,19 @@
+# Entornos virtuales (Locales)
+rodrigo/
+venv/
+env/
+ENV/
+
+# Archivos de compilación de Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Configuraciones de editores e IDEs
 .vscode/
 .idea/
+
+# Archivos del sistema
 .DS_Store
+Thumbs.db
