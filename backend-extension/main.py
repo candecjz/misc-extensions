@@ -439,10 +439,10 @@ MOCK_LABORATORIOS = [
         "Licencia": "MP 1234",
         "Nota": "Paciente en ayunas 8hs",
         "Fecha de Emision": "2023-10-25T11:45:00",
-        "Nombre del Estudio": "Hemograma completo (SNOMED: 43789009 | CIE10: Z01.7)",
+        "Nombre del Estudio": "Hemograma completo",
         "Resultados (Cantidad y Unidad)": "Glóbulos rojos 4.5 millones/uL | Glóbulos blancos 7000 /uL | Plaquetas 250000 /uL",
         "Notas adicionales": "Valores dentro de los parámetros normales",
-        "Problema Asociado": "Control de salud de rutina [Estado: Activo, Verificación: Confirmado, Severidad: Leve, Tipo: Problema] (SNOMED: 123456 | CIE10: Z00.0) Fecha: 2023-10-01"
+        "Problema Asociado": "Control de salud de rutina [Estado: Activo, Verificación: Confirmado, Severidad: Leve, Tipo: Problema] Fecha: 2023-10-01"
     },
     {
         "Institucion": "Hospital de la Madre y el Niño (SISA: 405060 | CUIT: 30-98765432-1)",
@@ -464,10 +464,10 @@ MOCK_LABORATORIOS = [
         "Licencia": "MP 5678",
         "Nota": "Pre-quirúrgico de urgencia",
         "Fecha de Emision": "2024-01-15T10:30:00",
-        "Nombre del Estudio": "Glucemia (SNOMED: 14749005 | CIE10: R73.9)",
+        "Nombre del Estudio": "Glucemia",
         "Resultados (Cantidad y Unidad)": "Glucosa 95 mg/dL",
         "Notas adicionales": "Muestra levemente hemolizada",
-        "Problema Asociado": "Sospecha de apendicitis aguda [Estado: Activo, Verificación: Confirmado, Severidad: Moderada, Tipo: Problema] (SNOMED: 654321 | CIE10: K35.9) Fecha: 2024-01-15"
+        "Problema Asociado": "Sospecha de apendicitis aguda [Estado: Activo, Verificación: Confirmado, Severidad: Moderada, Tipo: Problema] Fecha: 2024-01-15"
     },
     {
         "Institucion": "Centro Primario de Salud San Vicente",
@@ -492,7 +492,7 @@ MOCK_LABORATORIOS = [
         "Nombre del Estudio": "Perfil Tiroideo (TSH, T4L)",
         "Resultados (Cantidad y Unidad)": "Sin resultados",
         "Notas adicionales": "",
-        "Problema Asociado": "Hipotiroidismo [Estado: Crónico, Verificación: Confirmado, Severidad: Moderada, Tipo: Diagnóstico] (SNOMED: 40930008 | CIE10: E03.9) Fecha: 2020-05-10"
+        "Problema Asociado": "Hipotiroidismo [Estado: Crónico, Verificación: Confirmado, Severidad: Moderada, Tipo: Diagnóstico] Fecha: 2020-05-10"
     }
 ]
 
