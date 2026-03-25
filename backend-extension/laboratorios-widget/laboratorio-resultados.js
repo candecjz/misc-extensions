@@ -1,5 +1,10 @@
 (function (customElements) {
-    const SERVIDOR_BACKEND = "http://localhost:8000"; 
+
+    // test local
+    // const SERVIDOR_BACKEND = "http://localhost:8000"; 
+
+    // Dev
+    const SERVIDOR_BACKEND = "https://extension-hsi.nubecenter.com.ar";
     const API_BASE_URL = `${SERVIDOR_BACKEND}/api/laboratorios`;
 
     class LaboratoriosWidget extends HTMLElement {
