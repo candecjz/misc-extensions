@@ -1,6 +1,6 @@
 (function (customElements) {
-const SERVIDOR_BACKEND = "https://extension-hsi.nubecenter.com.ar";
-const API_BASE_URL = `${SERVIDOR_BACKEND}/api/laboratorios`;
+    const SERVIDOR_BACKEND = "http://localhost:8000"; 
+    const API_BASE_URL = `${SERVIDOR_BACKEND}/api/laboratorios`;
 
     class LaboratoriosWidget extends HTMLElement {
         constructor() {
@@ -174,6 +174,7 @@ const API_BASE_URL = `${SERVIDOR_BACKEND}/api/laboratorios`;
                     .btn-descargar {
                         background-color: #2687C5;
                         color: white;
+                        text-decoration: none;
                         border: none;
                         padding: 8px 16px;
                         border-radius: 4px;
@@ -184,9 +185,8 @@ const API_BASE_URL = `${SERVIDOR_BACKEND}/api/laboratorios`;
                         font-size: 13px;
                         box-shadow: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f;
                     }
-                    .btn-descargar:active { background-color: rgb(55, 148, 206); box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.15), 0 8px 10px #00000015, 0 3px 14px #00000013; }
+                    .btn-descargar:active { background-color: rgb(55, 148, 206); }
                     .btn-descargar svg { fill: white; width: 16px; height: 16px; }
-                    
                 </style>
             `;
 
