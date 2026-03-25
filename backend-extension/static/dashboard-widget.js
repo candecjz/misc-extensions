@@ -38,9 +38,7 @@ const PYTHON_DASHBOARD_URL = "https://extension-hsi.nubecenter.com.ar/dashboard"
                     } catch (e) { }
                 }
             }
-            // (El bucle termina sin encontrar nada en storage)
 
-            // 3. Cookies
             if (document.cookie) {
                 const cookies = document.cookie.split(';');
                 for (let i = 0; i < cookies.length; i++) {
@@ -65,16 +63,29 @@ const PYTHON_DASHBOARD_URL = "https://extension-hsi.nubecenter.com.ar/dashboard"
                     :host {
                         display: block;
                         width: 100%;
-                        min-height: 850px; 
-                        margin-top: 15px;
+                        padding: 30px 0; 
+                        box-sizing: border-box;
+                        display: flex;
                     }
                     .dashboard-frame {
                         width: 100%;
-                        height: 100%;
-                        min-height: 850px;
+                        min-height: 500px;
+                        height: calc(100vh - 140px); 
+                        max-width: 1300px;
+                        min-height: 500px;
                         border: none;
-                        border-radius: 4px;
+                        border-radius: 8px;
                         background-color: transparent;
+                    }
+
+                    @media (max-width: 768px) {
+                        :host {
+                            padding: 15px; 
+                        }
+                        .dashboard-frame {
+                            width: 95%;
+                            height: calc(100vh - 100px);
+                        }
                     }
                 </style>
             `;
