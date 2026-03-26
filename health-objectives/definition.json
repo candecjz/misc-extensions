@@ -1,8 +1,0 @@
-[
-  {
-    "slot": "INSTITUTION_HOME_PAGE",
-    "title": "Objetivos Sanitarios",
-    "componentName": "dashboard-widget",
-    "url": "./dashboard-widget.js" 
-  }
-]
