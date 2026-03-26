@@ -1,12 +1,12 @@
 import os
-from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 import requests
 from typing import Optional
 from datetime import datetime
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 app = FastAPI(title="Punto de Extensión HSI")
 
@@ -374,37 +374,57 @@ OBJETIVOS_DATA = [
                 
             }
 ]
+MOCK_LABORATORIOS = [
+    {
+        "id": "lab_101",
+        "Nombre del Paciente": "Perez, Juan",
+        "Numero de Documento": "41284061",
+        "Nombre del Estudio": "Hemograma completo",
+        "Problema Asociado": "Control de salud de rutina",
+        "pdf_file": "hemograma_test.pdf"
+    },
+    {
+        "id": "lab_102",
+        "Nombre del Paciente": "Lopez, Maxi",
+        "Numero de Documento": "22333444",
+        "Nombre del Estudio": "Glucemia",
+        "Problema Asociado": "Sospecha de apendicitis aguda",
+        "pdf_file": "glucemia_test.pdf",
+        "Institucion": "Hospital de la Madre y el Niño",
+        "profesion": "Cirujano General",
+        "Licencia": "MP 5678"
+    },
+    {
+        "id": "lab_103",
+        "Nombre del Paciente": "Gomez, Laura",
+        "Numero de Documento": "35123456",
+        "Nombre del Estudio": "Perfil Tiroideo",
+        "Problema Asociado": "Hipotiroidismo",
+        "pdf_file": "tiroideo_test.pdf"
+    }
+]
 
 def validar_sesion(token: str) -> bool:
-    if not token:
-        return False
-    endpoint = f"{HSI_BASE_URL}/account/info"
+    if not token: return False
     headers = {"Authorization": f"Bearer {token}", "accept": "*/*"}
     try:
-        response = requests.get(endpoint, headers=headers, timeout=3)
+        response = requests.get(f"{HSI_BASE_URL}/account/info", headers=headers, timeout=3)
         return response.status_code == 200
-    except:
-        return False
+    except: return False
 
 @app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request, t: Optional[str] = Query(None, description="Token opcional")):
-    
+async def dashboard(request: Request, t: Optional[str] = Query(None)):
     sesion_activa = validar_sesion(t)
     objetivos_principales = [item for item in OBJETIVOS_DATA if item['id'] < 10]
     rutas_transversales = [item for item in OBJETIVOS_DATA if item['id'] >= 10]
-
-    # --- NUEVA LÓGICA DE FECHAS ---
     ahora = datetime.now()
     
     def es_reciente(fecha_str):
-        if not fecha_str:
-            return False
+        if not fecha_str: return False
         try:
             fecha_item = datetime.strptime(fecha_str, "%m/%Y")
-            diferencia = ahora - fecha_item
-            return 0 <= diferencia.days <= 45
-        except:
-            return False
+            return 0 <= (ahora - fecha_item).days <= 45
+        except: return False
 
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
@@ -413,6 +433,23 @@ async def dashboard(request: Request, t: Optional[str] = Query(None, description
         "transversales": rutas_transversales,
         "es_reciente": es_reciente  
     })
+
+@app.get("/api/laboratorios/{dni}")
+async def api_laboratorios(dni: str):
+    resultados = [r for r in MOCK_LABORATORIOS if r["Numero de Documento"] == dni]
+    return {"status": "success", "paciente_dni": dni, "data": resultados}
+
+@app.get("/descargar-estudio/{estudio_id}")
+async def descargar_estudio(estudio_id: str):
+    estudio = next((item for item in MOCK_LABORATORIOS if item["id"] == estudio_id), None)
+    if not estudio:
+        raise HTTPException(status_code=404, detail="Estudio no encontrado.")
+    
+    file_path = os.path.join(static_path, "pdfs", estudio["pdf_file"])
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="El archivo PDF no existe en el servidor.")
+    
+    return FileResponse(path=file_path, filename=f"{estudio['Nombre del Estudio']}.pdf", media_type='application/pdf')
 
 @app.get("/")
 def health_check():

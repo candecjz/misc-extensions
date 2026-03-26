@@ -1,0 +1,8 @@
+[
+  {
+    "slot": "INSTITUTION_MENU",
+    "title": "Resultados de Laboratorio",
+    "componentName": "laboratorios-widget",
+    "url": "./laboratorio-resultados.js"
+  }
+]
