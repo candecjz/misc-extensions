@@ -13,6 +13,7 @@ app = FastAPI(title="Punto de Extensión HSI")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 static_path = os.path.join(BASE_DIR, "static")
 templates_path = os.path.join(BASE_DIR, "templates")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,6 +21,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 app.mount("/static", StaticFiles(directory=static_path), name="static")
 templates = Jinja2Templates(directory=templates_path)
 
@@ -28,6 +30,7 @@ HSI_BASE_URL = "https://hsi-dev.nubecenter.com.ar/api"
 templates.env.auto_reload = True
 templates.env.cache = None
 
+# --- DATOS MOCK ---
 OBJETIVOS_DATA = [
     {
         "id": 1,
@@ -310,70 +313,69 @@ OBJETIVOS_DATA = [
             }
         ],
     },
+    {
+        "id": 10,
+        "name": "Atención odontológica",
+        "type": "flowchart",
+        "category": "transversal",
+        "fecha": "09/2025",
+        "pdfDR": "/static/pdfs/ODON-TRANSVERSAL.pdf",
+    },
+    {
+        "id": 11,
+        "name": "Actividad física",
+        "type": "flowchart",
+        "category": "transversal",
+        "fecha": "06/2025",
+        "pdfDR": "/static/pdfs/ACT_FISICA_TRANSVERSAL.pdf",
+    },
+    {
+        "id": 12,
+        "name": "Atención nutricional",
+        "type": "flowchart",
+        "fecha": "06/2025",
+        "category": "transversal",
+        "children": [
             {
-                "id": 10,
-                "name": "Atención odontológica",
+                "id": 12.1,
+                "name": "Sobrepeso y obesidad",
                 "type": "flowchart",
-                "category": "transversal",
-                "fecha": "09/2025",
-                "pdfDR": "/static/pdfs/ODON-TRANSVERSAL.pdf",
-            },
-            {
-                "id": 11,
-                "name": "Actividad física",
-                "type": "flowchart",
-                "category": "transversal",
                 "fecha": "06/2025",
-                "pdfDR": "/static/pdfs/ACT_FISICA_TRANSVERSAL.pdf",
+                "pdfDR": "/static/pdfs/NUTRI-TRANSVERSAL-SOBREPESO.pdf",                    
             },
             {
-                "id": 12,
-                "name": "Atención nutricional",
+                "id": 12.2,
+                "name": "Celiaquía",
                 "type": "flowchart",
-                "fecha": "06/2025",
-                "category": "transversal",
-                "children": [
-                    {
-                        "id": 12.1,
-                        "name": "Sobrepeso y obesidad",
-                        "type": "flowchart",
-                        "fecha": "06/2025",
-                        "pdfDR": "/static/pdfs/NUTRI-TRANSVERSAL-SOBREPESO.pdf",                    
-                    },
-                    {
-                        "id": 12.2,
-                        "name": "Celiaquía",
-                        "type": "flowchart",
-                        "pdfDR":None,
-                    }
-                ], 
-            },
-            {
-                "id": 13,
-                "name": "Enfermería",
-                "type": "objective",
-                "fecha": "11/2025",
-                "category": "transversal",
-                "children": [
-                    {
-                        "id": 13.1,
-                        "name": "Primer y Segundo Nivel de Atención",
-                        "type": "flowchart",
-                        "fecha": "11/2025",
-                        "pdfDR": "/static/pdfs/ENF_TRANSVERSAL_N1_N2.pdf",
-                    },
-                    {
-                        "id": 13.2,
-                        "name": "Tercer Nivel de Atención",
-                        "type": "flowchart",
-                        "fecha": "11/2025",
-                        "pdfDR": "/static/pdfs/ENF_TRANSVERSAL_N3.pdf",
-                    }
-
-                ]
-                
+                "pdfDR":None,
             }
+        ], 
+    },
+    {
+        "id": 13,
+        "name": "Enfermería",
+        "type": "objective",
+        "fecha": "11/2025",
+        "category": "transversal",
+        "children": [
+            {
+                "id": 13.1,
+                "name": "Primer y Segundo Nivel de Atención",
+                "type": "flowchart",
+                "fecha": "11/2025",
+                "pdfDR": "/static/pdfs/ENF_TRANSVERSAL_N1_N2.pdf",
+            },
+            {
+                "id": 13.2,
+                "name": "Tercer Nivel de Atención",
+                "type": "flowchart",
+                "fecha": "11/2025",
+                "pdfDR": "/static/pdfs/ENF_TRANSVERSAL_N3.pdf",
+            }
+        ]
+    }
 ]
+
 MOCK_LABORATORIOS = [
     {
         "id": "lab_101",
@@ -437,7 +439,11 @@ async def dashboard(request: Request, t: Optional[str] = Query(None)):
 @app.get("/api/laboratorios/{dni}")
 async def api_laboratorios(dni: str):
     resultados = [r for r in MOCK_LABORATORIOS if r["Numero de Documento"] == dni]
-    return {"status": "success", "paciente_dni": dni, "data": resultados}
+            
+    return {
+        "total_registros": len(resultados),
+        "data": resultados
+    }
 
 @app.get("/descargar-estudio/{estudio_id}")
 async def descargar_estudio(estudio_id: str):
