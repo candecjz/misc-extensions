@@ -164,14 +164,13 @@ OBJETIVOS_DATA = [
         "id": 6,
         "name": "Prevención oportuna del cáncer en adulto",
         "type": "objective",
-        "fecha": "09/2025",
+        "fecha": "04/2026",
         "children": [
             {
                 "id": 6.1,
                 "name": "Cáncer colorrectal",
                 "type": "flowchart",
                 "fecha": "09/2025",
-                "miniature1": "/static/images/6-a.png",
                 "pdfDR": "/static/pdfs/6-A.pdf",
             },
             {
@@ -179,15 +178,13 @@ OBJETIVOS_DATA = [
                 "name": "Cáncer cervicouterino",
                 "type": "flowchart",
                 "fecha": "06/2025",
-                "miniature1": "/static/images/6-b.png",
                 "pdfDR": "/static/pdfs/6-B.pdf",
             },
             {
                 "id": 6.3,
                 "name": "Cáncer de mama",
                 "type": "flowchart",
-                "fecha": "06/2025",
-                "miniature1": "/static/images/6-c.png",
+                "fecha": "04/2026",
                 "pdfDR": "/static/pdfs/6-C.pdf",
             },
         ],
