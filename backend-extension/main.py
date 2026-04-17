@@ -370,7 +370,15 @@ OBJETIVOS_DATA = [
                 "pdfDR": "/static/pdfs/ENF_TRANSVERSAL_N3.pdf",
             }
         ]
-    }
+     },
+    {
+        "id": 14,
+        "name": "Salud sexual y reproductiva",
+        "type": "flowchart",
+        "category": "transversal",
+        "fecha": "04/2026",
+        "pdfDR": "/static/pdfs/SALUD_SEXUAL_REPRODUCTIVA.pdf",
+    },
 ]
 
 MOCK_LABORATORIOS = [
