@@ -2,14 +2,14 @@
 
     // const SERVIDOR_BACKEND = "http://localhost:8000";
     const SERVIDOR_BACKEND = "https://extension-hsi.nubecenter.com.ar";
- 
+
     const API_BASE_URL = `${SERVIDOR_BACKEND}/api/laboratorios`;
 
     const ROLES_PERMITIDOS = [
-        "ROOT", 
-        "ADMINISTRADOR", 
-        "ADMINISTRADOR_INSTITUCIONAL_BACKOFFICE", 
-        "ESPECIALISTA_MEDICO", 
+        "ROOT",
+        "ADMINISTRADOR",
+        "ADMINISTRADOR_INSTITUCIONAL_BACKOFFICE",
+        "ESPECIALISTA_MEDICO",
         "PERSONAL_DE_LABORATORIO"
     ];
 
@@ -17,38 +17,41 @@
         constructor() {
             super();
             this.attachShadow({ mode: 'open' });
-            this.inicializado = false; 
+            this.inicializado = false;
         }
 
         async connectedCallback() {
-            if (this.inicializado) return; 
+            if (this.inicializado) return;
             this.inicializado = true;
-            this.shadowRoot.innerHTML = `
-                <div style="padding: 40px; text-align: center; font-family: sans-serif; color: #2687C5;">
-                    ⏳ Verificando credenciales de seguridad...
-                </div>
-            `;
-            await this.verificarPermisos();
+            /* BLOQUE DE SEGURIDAD COMENTADO PARA DESARROLLO LOCAL
+    this.shadowRoot.innerHTML = `
+        <div style="padding: 40px; text-align: center; font-family: sans-serif; color: #2687C5;">
+            ⏳ Verificando credenciales de seguridad...
+        </div>
+    `;
+    await this.verificarPermisos();
+    */
+
+            this.renderSearch();
         }
 
         async verificarPermisos() {
             try {
-                // Le preguntamos a HSI de forma nativa 
                 const response = await fetch('/api/account/permissions');
-                
+
                 if (!response.ok) throw new Error('No se pudo validar al usuario');
 
                 const data = await response.json();
                 const asignaciones = data.roleAssignments || [];
-                
+
                 // todos los roles de usuario
                 const rolesDelUsuario = asignaciones.map(asignacion => asignacion.role);
-                
+
                 console.log("🛡️ Roles detectados por el Widget:", rolesDelUsuario);
                 const tienePermiso = rolesDelUsuario.some(rol => ROLES_PERMITIDOS.includes(rol));
 
                 if (tienePermiso) {
-                    this.renderSearch(); 
+                    this.renderSearch();
                 } else {
                     this.renderAccesoDenegado();
                 }
@@ -113,7 +116,7 @@
                 if (!response.ok) throw new Error('Error en el servidor de laboratorios');
 
                 const data = await response.json();
-                
+
                 if (data.total_registros === 0) {
                     this.renderEmpty(dni);
                 } else {
@@ -142,7 +145,7 @@
             const contenedor = this.shadowRoot.getElementById('resultados-container');
             const nombrePaciente = laboratorios[0]["Nombre del Paciente"] || "Paciente";
             const RESULTADOS_STYLES = `<style>.paciente-header { background-color: #e6f7ff; padding: 15px 20px; display: flex; align-items: center; border-bottom: 1px solid #e0e0e0; } .icono-paciente { margin-right: 15px; color: #2687C5; display: flex; } .item-estudio { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; } .info-estudio { display: flex; align-items: center; } .btn-descargar { background-color: #2687C5; color: white; text-decoration: none; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; box-shadow: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f; } .btn-descargar:active { background-color: rgb(55, 148, 206); } .btn-descargar svg { fill: white; width: 16px; height: 16px; }</style>`;
-            
+
             let htmlLista = '';
             laboratorios.forEach(lab => {
                 const problema = lab["Problema Asociado"] ? lab["Problema Asociado"].split(' [')[0] : 'No especificado';
@@ -174,6 +177,6 @@
         renderEmpty(dni) { this.shadowRoot.getElementById('resultados-container').innerHTML = `<div style="text-align: center; padding: 40px; color: #666;">No se encontraron resultados para: <strong>${dni}</strong>.</div>`; }
         renderError() { this.shadowRoot.getElementById('resultados-container').innerHTML = `<div style="text-align: center; padding: 20px; color: red;">Error de conexión con la base de datos de laboratorios.</div>`; }
     }
-    
+
     customElements.define('laboratorios-widget', LaboratoriosWidget);
 })(window.customElements);
