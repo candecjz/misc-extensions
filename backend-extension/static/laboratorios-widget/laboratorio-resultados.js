@@ -108,44 +108,7 @@
             contenedor.innerHTML = `<div style="padding: 40px; text-align: center; color: #2687C5;">⏳ Buscando para el DNI ${dni}...</div>`;
 
             try {
-                // Extraer el token de sesión y el ID de institución
-                const token = sessionStorage.getItem('token') ||
-                    localStorage.getItem('token') ||
-                    sessionStorage.getItem('jwt') ||
-                    localStorage.getItem('jwt');
-
-                let institutionId = sessionStorage.getItem('institutionId') ||
-                    localStorage.getItem('institutionId') ||
-                    sessionStorage.getItem('currentInstitutionId') ||
-                    localStorage.getItem('currentInstitutionId');
-
-                // Si no se encuentra institutionId en almacenamiento, intentar obtenerlo de las asignaciones
-                if (!institutionId) {
-                    try {
-                        const permResponse = await fetch('/api/account/permissions');
-                        if (permResponse.ok) {
-                            const permData = await permResponse.json();
-                            const asignaciones = permData.roleAssignments || [];
-                            if (asignaciones.length > 0) {
-                                institutionId = asignaciones[0].institutionId;
-                            }
-                        }
-                    } catch (e) {
-                        console.warn("No se pudo consultar los permisos para obtener institutionId:", e);
-                    }
-                }
-
-                const headers = {
-                    'accept': 'application/json'
-                };
-                if (token) {
-                    headers['Authorization'] = `Bearer ${token}`;
-                }
-                if (institutionId) {
-                    headers['X-Institution-Id'] = institutionId;
-                }
-
-                const response = await fetch(`${API_BASE_URL}/${dni.trim()}`, { headers });
+                const response = await fetch(`${API_BASE_URL}/${dni.trim()}`);
 
                 if (!response.ok) throw new Error('Error en el servidor de laboratorios');
 
@@ -180,25 +143,9 @@
             const nombrePaciente = laboratorios[0]["Nombre del Paciente"] || "Paciente";
             const RESULTADOS_STYLES = `<style>.paciente-header { background-color: #e6f7ff; padding: 15px 20px; display: flex; align-items: center; border-bottom: 1px solid #e0e0e0; } .icono-paciente { margin-right: 15px; color: #2687C5; display: flex; } .item-estudio { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; } .info-estudio { display: flex; align-items: center; } .btn-descargar { background-color: #2687C5; color: white; text-decoration: none; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; box-shadow: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f; } .btn-descargar:active { background-color: rgb(55, 148, 206); } .btn-descargar svg { fill: white; width: 16px; height: 16px; }</style>`;
 
-            const token = sessionStorage.getItem('token') ||
-                localStorage.getItem('token') ||
-                sessionStorage.getItem('jwt') ||
-                localStorage.getItem('jwt');
-
             let htmlLista = '';
             laboratorios.forEach(lab => {
                 const problema = lab["Problema Asociado"] ? lab["Problema Asociado"].split(' [')[0] : 'No especificado';
-
-                // Construir URL de descarga con parámetros de consulta
-                let downloadUrl = `${SERVIDOR_BACKEND}/descargar-estudio/${lab.id}`;
-                const params = [];
-                if (token) params.push(`t=${encodeURIComponent(token)}`);
-                if (lab.refsetCode) params.push(`refset=${encodeURIComponent(lab.refsetCode)}`);
-                if (lab.fileType) params.push(`type=${encodeURIComponent(lab.fileType)}`);
-                if (params.length > 0) {
-                    downloadUrl += `?${params.join('&')}`;
-                }
-
                 htmlLista += `
                     <div class="item-estudio">
                         <div class="info-estudio">
@@ -208,7 +155,7 @@
                                 <div style="font-size: 13px;">Problema: ${problema}</div>
                             </div>
                         </div>
-                        <a href="${downloadUrl}" target="_blank" class="btn-descargar" style="text-decoration: none;">
+                        <a href="${SERVIDOR_BACKEND}/descargar-estudio/${lab.id}" target="_blank" class="btn-descargar" style="text-decoration: none;">
                             <svg viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></svg> Descargar
                         </a>
                     </div>

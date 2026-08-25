@@ -24,17 +24,6 @@ class NumberedCanvas(canvas.Canvas):
         super().save()
 
     def draw_page_elements(self, page_count):
-        # 1. Marca de agua semitransparente (Logo de HSI)
-        self.saveState()
-        self.setFillAlpha(0.05)
-        self.setStrokeAlpha(0.05)
-        
-        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "logo-hsi.png")
-        if os.path.exists(logo_path):
-            # Centrado en una página Letter (612 x 792)
-            # Ancho = 350, Alto = 105 (relación de aspecto original ~3.33)
-            self.drawImage(logo_path, 131, 343, width=350, height=105, mask='auto')
-        self.restoreState()
 
         # 2. Pie de página
         self.saveState()
@@ -85,7 +74,7 @@ def generate_lab_pdf(data: dict) -> bytes:
         fontName='Helvetica-Bold',
         fontSize=12,
         textColor=text_dark,
-        alignment=0 # Izquierda
+        alignment=2 # Derecha
     )
     
     meta_label_style = ParagraphStyle(
@@ -174,23 +163,22 @@ def generate_lab_pdf(data: dict) -> bytes:
 
     story = []
     
-    # 1. Cabecera (Título a la izquierda, Logo a la derecha)
+    # 1. Cabecera (Logo a la izquierda, Título a la derecha)
     logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "logo-hsi.png")
     from reportlab.platypus import Image as RLImage
     
     if os.path.exists(logo_path):
-        # Ajustamos el tamaño del logo en la cabecera (120pt de ancho, 36pt de alto para conservar proporción)
-        logo_flowable = RLImage(logo_path, width=120, height=36)
+        # Ajustamos el tamaño del logo en la cabecera preservando la relación de aspecto 5:1 (ancho=160pt, alto=32pt)
+        logo_flowable = RLImage(logo_path, width=160, height=32)
     else:
         # Fallback de texto si el logo no está
         logo_flowable = Paragraph("<b>HISTORIA DE SALUD INTEGRADA</b>", ParagraphStyle('LogoFallback', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=14, textColor=primary_color))
         
     title_flowable = Paragraph("INFORME DE RESULTADOS DE LABORATORIO", title_style)
     
-    header_table = Table([[title_flowable, logo_flowable]], colWidths=[352, 180])
+    header_table = Table([[logo_flowable, title_flowable]], colWidths=[180, 352])
     header_table.setStyle(TableStyle([
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('ALIGN', (1, 0), (1, 0), 'RIGHT'), # Alinear el logo a la derecha
         ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
         ('TOPPADDING', (0, 0), (-1, -1), 0),
         ('LEFTPADDING', (0, 0), (-1, -1), 0),
