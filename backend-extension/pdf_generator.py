@@ -174,7 +174,7 @@ def generate_lab_pdf(data: dict) -> bytes:
         # Fallback de texto si el logo no está
         logo_flowable = Paragraph("<b>HISTORIA DE SALUD INTEGRADA</b>", ParagraphStyle('LogoFallback', parent=styles['Normal'], fontName='Helvetica-Bold', fontSize=14, textColor=primary_color))
         
-    title_flowable = Paragraph("INFORME DE RESULTADOS DE LABORATORIO", title_style)
+    title_flowable = Paragraph("RESULTADOS DE LABORATORIO", title_style)
     
     header_table = Table([[logo_flowable, title_flowable]], colWidths=[180, 352])
     header_table.setStyle(TableStyle([
@@ -221,20 +221,18 @@ def generate_lab_pdf(data: dict) -> bytes:
     row3_col3_p = Paragraph(f"<b>Origen:</b> {origen}", meta_label_style)
     
     row4_p = Paragraph(f"<b>Solicitado por Dr./Dra.:</b> {solicitante}", meta_label_style)
-    row5_p = Paragraph(f"<b>Validado por el Bioquimico/a:</b> {validador}", meta_label_style)
     
-    row6_col1_p = Paragraph(f"<b>Orden:</b> {orden}", meta_label_style)
-    row6_col2_p = Paragraph(f"<b>Fecha:</b> {fecha}", meta_label_style)
-    row6_col3_p = Paragraph(f"<b>Hora:</b> {hora}", meta_label_style)
-    row6_col4_p = Paragraph(f"<b>Edad:</b> {edad}", meta_label_style)
+    row5_col1_p = Paragraph(f"<b>Orden:</b> {orden}", meta_label_style)
+    row5_col2_p = Paragraph(f"<b>Fecha:</b> {fecha}", meta_label_style)
+    row5_col3_p = Paragraph(f"<b>Hora:</b> {hora}", meta_label_style)
+    row5_col4_p = Paragraph(f"<b>Edad:</b> {edad}", meta_label_style)
     
     metadata_data = [
         [row1_p, "", "", ""],                             # Fila 1: Institución (ocupa 4 cols)
         [row2_p, "", "", ""],                             # Fila 2: Perteneciente a (ocupa 4 cols)
         [row3_col1_p, "", row3_col3_p, ""],               # Fila 3: DNI (2 cols) | Origen (2 cols)
         [row4_p, "", "", ""],                             # Fila 4: Solicitado por (ocupa 4 cols)
-        [row5_p, "", "", ""],                             # Fila 5: Validado por (ocupa 4 cols)
-        [row6_col1_p, row6_col2_p, row6_col3_p, row6_col4_p] # Fila 6: Orden | Fecha | Hora | Edad
+        [row5_col1_p, row5_col2_p, row5_col3_p, row5_col4_p] # Fila 5: Orden | Fecha | Hora | Edad
     ]
     
     metadata_table = Table(metadata_data, colWidths=[col_w]*4)
@@ -245,7 +243,6 @@ def generate_lab_pdf(data: dict) -> bytes:
         ('SPAN', (0, 2), (1, 2)), # Fila 3: DNI abarca col 0 a 1
         ('SPAN', (2, 2), (3, 2)), # Fila 3: Origen abarca col 2 a 3
         ('SPAN', (0, 3), (3, 3)), # Fila 4: Solicitado por abarca col 0 a 3
-        ('SPAN', (0, 4), (3, 4)), # Fila 5: Validado por abarca col 0 a 3
         
         # Ajustes de espaciado y fondo
         ('BACKGROUND', (0, 0), (-1, -1), bg_light),
