@@ -23,17 +23,20 @@
         async connectedCallback() {
             if (this.inicializado) return;
             this.inicializado = true;
-            this.shadowRoot.innerHTML = `
-                <div style="padding: 40px; text-align: center; font-family: sans-serif; color: #2687C5;">
-                    ⏳ Verificando credenciales de seguridad...
-                </div>
-            `;
-            await this.verificarPermisos();
+            /* BLOQUE DE SEGURIDAD COMENTADO PARA DESARROLLO LOCAL
+    this.shadowRoot.innerHTML = `
+        <div style="padding: 40px; text-align: center; font-family: sans-serif; color: #2687C5;">
+            ⏳ Verificando credenciales de seguridad...
+        </div>
+    `;
+    await this.verificarPermisos();
+    */
+
+            this.renderSearch();
         }
 
         async verificarPermisos() {
             try {
-                // Le preguntamos a HSI de forma nativa 
                 const response = await fetch('/api/account/permissions');
 
                 if (!response.ok) throw new Error('No se pudo validar al usuario');

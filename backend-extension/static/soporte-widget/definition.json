@@ -1,0 +1,8 @@
+[
+  {
+    "slot": "SYSTEM_HOME_PAGE",
+    "title": "Sistema de Soporte",
+    "componentName": "ticket-button-widget",
+    "url": "./main.js"
+  }
+]
